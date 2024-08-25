@@ -1,0 +1,48 @@
+
+function validateCityName(city) {
+   
+    const cityRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]+$/;
+    return cityRegex.test(city);
+}
+
+
+async function getWeather(city) {
+
+    const apiKey = 'SUA_CHAVE_DE_API'; 
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+        }
+        const weatherData = await response.json();
+        return weatherData.main.temp; // Retorna a temperatura atual
+    } catch (error) {
+        console.error("Erro ao obter dados meteorológicos:", error);
+        return null;
+    }
+}
+
+
+async function main() {
+  
+    const city = prompt("Digite o nome da cidade:");
+
+  
+    if (!validateCityName(city)) {
+        console.error("Nome da cidade inválido. Utilize apenas letras, espaços e traços.");
+        return;
+    }
+
+   
+    const temperature = await getWeather(city);
+    if (temperature !== null) {
+        console.log(`A temperatura atual em ${city} é de ${temperature}°C.`);
+    } else {
+        console.log("Não foi possível obter os dados meteorológicos.");
+    }
+}
+
+
+main();
